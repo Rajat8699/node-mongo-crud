@@ -14,6 +14,8 @@ const getPostsController = async (req, res, next) => {
 const addPostController = async (req, res, next) => {
     const { body } = req
     try {
+        if (!req.userId) return res.json({ message: "Unauthorized" });
+
         let obj = { title: body.title, description: body.description, author: body.author, image: body.image }
         const createPost = await Posts.create(obj);
 
@@ -28,8 +30,13 @@ const addPostController = async (req, res, next) => {
 const updatePostController = async (req, res, next) => {
     const { body, params } = req
     try {
+
+        if (!req.userId) return res.json({ message: "Unauthorized" });
+
         let obj = { title: body.title, description: body.description, author: body.author, image: body.image }
         let id = params.id
+
+
         const updatePost = await Posts.findOneAndUpdate({ _id: id }, { $set: obj });
 
         res.status(200).json(updatePost)
@@ -43,6 +50,9 @@ const updatePostController = async (req, res, next) => {
 const deletePostController = async (req, res, next) => {
     const { params } = req
     try {
+
+        if (!req.userId) return res.json({ message: "Unauthorized" });
+
         let id = params.id
         const deletePost = await Posts.findByIdAndDelete({ _id: new mongoose.Types.ObjectId(id) });
 
